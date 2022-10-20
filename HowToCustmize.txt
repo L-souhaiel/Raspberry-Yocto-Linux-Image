@@ -1,0 +1,10 @@
+to create new layer . 
+	- enable the env , by calling source poky/oe.. build/
+	- cd .. (to the YOCTO dir)
+	- run bitbake-layers create-layer meta-(name : custum). 
+	- mkdir -p recipes-core/images   (the name is very important because poky will search for recipes-core/image for the new layer)
+	- cp ../poky/meta/recipes-core/images/core-image-base.bb recipes-core/images/custom-image.bb (to copie the bitbaked image type into our dir and renamed it custom-image.bb
+	- apply change to .bb file by ( adding user , change password , priority,...)
+
+
+	 

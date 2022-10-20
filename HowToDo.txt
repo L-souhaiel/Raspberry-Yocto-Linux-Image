@@ -1,0 +1,69 @@
+How to add instrcution. 
+	for exp to change python version or version of any other command:
+		open ~/.bashrc
+		add: alias python = python3
+		close file
+		run source ~/.bashrc
+
+
+
+Definition:
+
+
+
+	Recipes are the most common file type in a Yocto build description. They contain instructions on how to configure, compile and deploy a given piece of software. Recipes also 	 contain the location of the source code. This location can either be a static release archive, or a reference to a Git repository. Custom modifications to the sources themselves or  the build process can be provided in form of patches. To minimize repetition for common tasks in recipes, such behavior is encapsulated in recipe class files, from which recipes can inherit.
+
+
+
+	Image contains all packages which have to be built and installed into the final root file system. The build system will take care that any known dependent package will also be installed. The end goal for anyone using the Yocto Project should be to create a Linux distributions that is customized to match your product(s) requirements. Images are a central concept within the Yocto Project and essential to the definition of a Linux distribution.
+
+
+
+How to make a Custimized image using Yocto toolshain:
+
+	- first download poky and then branch to the yocto version you wanna use to build the image
+		using git checkout <ex:dunfell>
+		
+	- then download the Board supported package (BSP) layer , developed from the vendor of your board. (meta-raspberrypi). 
+	
+	-then change the branch of the BSP to the one you like to use it should be the same as poky. 
+	
+	- Read Readme file to check for dependesies and dowanload them . for exp for raspi you have to dowanload open embedded . 
+	
+	- added  the needed layer of your image to the file :conf/bblayers.conf. to do that:
+		
+		- run  source poky/oe-en...  build-rpi/ this will create the build directory. 
+		
+		- insid this build directory there is conf dir , run gedit conf/bblayers.conf. and added the path to the layers. 
+		
+		- copie the path to the meta-raspberrypi layer and added it 
+		
+		- in the readme file of the meta-raspberrypi there is some layer dependecies. for exp we need meta-oe meta-python meta-multimidea from openemebedded.
+		
+		- just add the path of every needed layer the conf file. they is a directorie for every layer in the meta-openembedded dir.  just run pwd and copie every path to the 
+			bblayer.conf. (dont add the path of meta-opencembedded . just addd the path of every dir layer inside the meta-openembedded like mta-oe , ...)
+			
+	
+	- next thing is choose a Machine that bitbake will build image for.  to do that:
+		
+		- go into meta-raspberrypi/conf/machine/ and choose one of the machine you need . just copy tthe name of the file machine you needed without .conf
+		
+		- go into your build/conf dir and search  for local.conf. 
+		
+		- added the copied machine name into the machine variable.
+		
+		-add the XZ_DEFAULTS = "--memlimit=1500MiB" to change the XZ_DEFAULTS for the low memory RAM board. because XZ will attempt to use 2gb of RAM if he didnt find it the build will fail
+		
+	
+	- run bitbake -c menuconfig virtual/kernel to make some change in the configuration
+	
+	- just leave the configuratin as it and run  bitbake (ur choosen image) . u can check ur vendor documentation to see supported image. i runed core-image-minimal
+		so i used bitbake core-image-minimal. (these process will take a long time in the first time.	
+	-use bitbake -c clean core-image-minimal to clean the buildet image and buildet agin without a lot of time of waiting of the build process to be done from the begining. 
+	
+	- if you want to use bitbake or to build an image using bitbake in the offline mode . do like following:
+		-set BB_SRCREV_POLICY = "cache" the local.conf which will prevent the AUTOREV recipes from failing by using the local cache for revisions
+                     https://www.yoctoproject.org/docs/2.1/bitbake-user-manual/bitbake-user-manual.html#var-BB_SRCREV_POLICY
+                     But If there is a new commits on the remote repo you probably need to disable this and rebuild to let bitbake fetch the latest revision and
+                     you can re enable it afterwards.
+			
